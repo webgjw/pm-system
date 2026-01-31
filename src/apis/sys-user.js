@@ -7,3 +7,32 @@ export const listPage = (data) => {
         data,
     });
 };
+
+// 新增
+export const save = (data) => {
+    return request({
+        url: 'sys/user/save',
+        method: 'post',
+        data,
+    });
+};
+
+// 编辑
+export const update = (data) => {
+    const { id } = data;
+    delete data.id;
+    return request({
+        url: `sys/user/update/${id}`,
+        method: 'post',
+        data,
+    });
+};
+
+// 设置密码
+export const setPsw = (data) => {
+    return request({
+        url: 'sys/user/password',
+        method: 'get',
+        data,
+    });
+};

@@ -42,3 +42,46 @@ export function listPage() {
         }
     };
 }
+
+// 新增
+export function save() {
+    return {
+        url: 'sys/user/save',
+        method: 'post',
+        response: (opts) => {
+            return {
+                code: 200,
+                data: {
+                    name: opts.data.name,
+                    password: '@word(8,16)'
+                }
+            }
+        }
+    }
+}
+// 编辑
+export function update() {
+    return {
+        url: 'sys/user/update',
+        method: 'post',
+        response: {
+            code: 200
+        }
+    }
+}
+// 设置密码
+export function setPsw() {
+    return {
+        url: 'sys/user/password',
+        method: 'get',
+        response: (opts) => {
+            return {
+                code: 200,
+                data: {
+                    name: opts.data.name,
+                    password: '@word(8,16)'
+                }
+            }
+        }
+    }
+}
