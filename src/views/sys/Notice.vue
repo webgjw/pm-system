@@ -7,10 +7,10 @@
                 <el-input v-model="filters.title" :placeholder="t('thead.title')"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button icon="search" type="primary" @click="findPage">{{ t('action.search') }}</el-button>
+                <el-button icon="search" type="primary" @click="doSearch">{{ t('action.search') }}</el-button>
             </el-form-item>
             <el-form-item>
-                <el-button icon="plus" type="primary" @click="handleAdd">{{ t('action.add') }}</el-button>
+                <el-button icon="plus" type="primary" @click="doAdd">{{ t('action.add') }}</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -21,7 +21,7 @@
         :filters="filters"
         :columns="columns"
         :operations="operations"
-        @handleEdit="handleEdit"
+        @handleEdit="doEdit"
         @handleDelete="handleDelete"
     >
     </cm-table>
@@ -34,7 +34,7 @@
     draggable
     width="40%"
     :close-on-click-modal="false"
-    @close="closeDlg"
+    @close="doClose"
 >
     <el-form ref="formRef" :model="form" :rules="rules" label-width="80px" label-position="right">
         <el-form-item :label="t('thead.title')" prop="title">
@@ -48,7 +48,7 @@
         </el-form-item>
     </el-form>
     <template #footer>
-        <el-button @click="closeDlg">{{ t('action.cancel') }}</el-button>
+        <el-button @click="doClose">{{ t('action.cancel') }}</el-button>
         <el-button
             type="primary"
             :loading="formLoading"
@@ -60,25 +60,42 @@
 
 <script setup>
 import { listPage, save, update } from '@/apis/sys-notice';
-const { t } = useI18n();
-const tableRef = ref();
+import useTableHandlers from '../use-table-handlers';
 const filters = reactive({
     title: '',
 });
-const dialogVisible = ref(false);
-const isEdit = ref(false);
-
-const formRef = ref();
 const form = reactive({
     id: '',
     title: '',
     content: '',
     isPublish: false,
 });
-const formLoading = ref(false);
 
-const __formOld__ = { ...form };
+const {
+    t,
+    tableRef,
+    dialogVisible,
+    isEdit,
+    formLoading,
+    formRef,
+    doSearch,
+    doAdd,
+    doEdit,
+    doSubmit,
+    doClose,
+} = useTableHandlers(form);
 
+const operations = [
+    {
+        type: 'edit',
+        disabled: (row) => !!row.publishTime
+    },
+    {
+        type: 'delete'
+    }
+];
+
+// computed
 const columns = computed(() => [
     { type: 'selection' },
     { prop: 'id', label: t('thead.ID'), minWidth: 50 },
@@ -101,79 +118,11 @@ const rules = computed(() => {
     }
 });
 
-const operations = [
-    {
-        type: 'edit',
-        disabled: (row) => !!row.publishTime
-    },
-    {
-        type: 'delete'
-    }
-];
-// 获取分页数据
-function findPage() {
-    tableRef.value.reload();
-}
-function handleEdit(row) {
-    isEdit.value = true;
-    dialogVisible.value = true;
-    for (const k in form) {
-        if (k in row) {
-            form[k] = row[k];
-        }
-    }
-}
+// methods
 function handleDelete(ids, callback) {
     console.log('delete', ids, callback);
 }
-function handleAdd() {
-    dialogVisible.value = true;
-    isEdit.value = false;
-}
-function resetForm() {
-    for (const k in __formOld__) {
-        form[k] = __formOld__[k];
-    }
-}
-function closeDlg() {
-    dialogVisible.value = false;
-    resetForm();
-}
 function handleSubmit() {
-    formRef.value.validate((valid) => {
-        if (!valid) return;
-        formLoading.value = true;
-        let promise;
-        const params = getParams();
-        if (isEdit.value) {
-            promise = update(params);
-        } else {
-            promise = save(params);
-        }
-        promise
-            .then(() => {
-                ElMessage({
-                    message: t('tips.success'),
-                    type: 'success',
-                    showClose: true,
-                });
-                closeDlg();
-                if (isEdit.value) {
-                    tableRef.value.refresh();
-                } else {
-                    tableRef.value.reload();
-                }
-            })
-            .finally(() => {
-                formLoading.value = false;
-            });
-    });
-}
-function getParams() {
-    const params = { ...form };
-    if (!isEdit.value) {
-        delete params.id;
-    }
-    return params;
+    doSubmit({ save, update });
 }
 </script>

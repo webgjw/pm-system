@@ -7,3 +7,23 @@ export const listPage = (data) => {
         data,
     });
 };
+
+// 新增
+export const save = (data) => {
+    return request({
+        url: 'app/role/save',
+        method: 'post',
+        data,
+    });
+};
+
+// 编辑
+export const update = (data) => {
+    const { id } = data;
+    delete data.id;
+    return request({
+        url: `app/role/update/${id}`,
+        method: 'post',
+        data,
+    });
+};
