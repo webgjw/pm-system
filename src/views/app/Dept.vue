@@ -7,10 +7,10 @@
                 <el-input v-model="filters.title" :placeholder="t('thead.title')"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button icon="search" type="primary" @click="findPage">{{ t('action.search') }}</el-button>
+                <el-button icon="search" type="primary" @click="doSearch">{{ t('action.search') }}</el-button>
             </el-form-item>
             <el-form-item>
-                <el-button icon="plus" type="primary">{{ t('action.add') }}</el-button>
+                <el-button icon="plus" type="primary" @click="handleAdd">{{ t('action.add') }}</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -28,15 +28,68 @@
     >
     </cm-table>
 </div>
+<el-dialog
+    :title="isEdit ? t('action.edit') : t('action.add')"
+    width="40%"
+    draggable
+    v-model="dialogVisible"
+    :close-on-click-model="false"
+    @close="doClose"
+>
+    <el-form
+        :model="form"
+        :rules="rules"
+        ref="formRef"
+        @keyup.enter="handleSubmit"
+        label-width="80px"
+    >
+        <el-form-item :label="t('thead.name')" prop="name">
+            <el-input v-model="form.name" :placeholder="t('thead.name')"></el-input>
+        </el-form-item>
+        <el-form-item :label="t('form.parent')" prop="parentId">
+            <el-cascader
+                v-model="form.parentId"
+                :props="{ label: 'name', value: 'id', checkStrictly: true, emitPath: false }"
+                :options="deptData"
+                clearable
+                filterable
+                class="w100p"
+            ></el-cascader>
+        </el-form-item>
+    </el-form>
+    <template #footer>
+        <el-button @click="doClose">{{ t('action.cancel') }}</el-button>
+        <el-button type="primary" @click="handleSubmit">{{ t('action.confirm') }}</el-button>
+    </template>
+</el-dialog>
 </template>
 
 <script setup>
-import { listTree } from '@/apis/app-dept';
-const { t } = useI18n();
-const tableRef = ref();
+import { listTree, listOtherTreeById, save, update } from '@/apis/app-dept';
+import useTableHandlers from '../use-table-handlers';
 const filters = reactive({
     title: '',
 });
+const form = reactive({
+    id: '',
+    name: '',
+    parentId: null,
+});
+const {
+    t,
+    tableRef,
+    dialogVisible,
+    isEdit,
+    formLoading,
+    formRef,
+    doSearch,
+    doAdd,
+    doEdit,
+    doSubmit,
+    doClose=
+} = useTableHandlers();
+const deptData = ref([]);
+
 const columns = computed(() => [
     { prop: 'id', label: t('thead.ID') },
     { prop: 'name', label: t('thead.name') },
@@ -45,23 +98,32 @@ const columns = computed(() => [
     { prop: 'lastUpdateBy', label: t('thead.updatedBy') },
     { prop: 'lastUpdateTime', label: t('thead.updatedTime'), minWidth: 160 },
 ]);
-const operations = [
-    {
-        type: 'edit',
-        disabled: (row) => !!row.publishTime
-    },
-    {
-        type: 'delete'
+const rules = computed(() => {
+    return {
+        name: [
+            { required: true, message: t('form.usernameHolder'), trigger: ['change', 'blur'] }
+        ]
     }
-];
-// 获取分页数据
-function findPage() {
-    tableRef.value.reload();
+});
+
+// mehtods
+function initFormRequest(row) {
+    listOtherTreeById(row ? { id: row.id } : null).then(res => {
+        deptData.value = res.data;
+    });
+}
+function handleAdd() {
+    initFormRequest();
+    doAdd();
 }
 function handleEdit(row) {
-    console.log('edit', row);
+    initFormRequest(row);
+    doEdit(row);
 }
 function handleDelete(ids, callback) {
     console.log('delete', ids, callback);
+}
+function handleSubmit() {
+    doSubmit({ save, update });
 }
 </script>

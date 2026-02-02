@@ -60,3 +60,13 @@ export function listTree() {
         response: findTreeData,
     };
 }
+
+export function operations() {
+    return {
+        url: 'app/dept/(save|update)',
+        method: 'post',
+        response: {
+            code: 200,
+        }
+    }
+}

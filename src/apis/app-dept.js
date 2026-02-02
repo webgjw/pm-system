@@ -6,3 +6,23 @@ export const listTree = () => {
         method: 'get',
     });
 };
+
+// 新增
+export const save = (data) => {
+    return request({
+        url: 'app/dept/save',
+        method: 'post',
+        data,
+    });
+};
+
+// 编辑
+export const update = (data) => {
+    const { id } = data;
+    delete data.id;
+    return request({
+        url: `app/dept/update/${id}`,
+        method: 'post',
+        data,
+    });
+};
