@@ -27,3 +27,10 @@ export const update = (data) => {
         data,
     });
 };
+
+export const listSimple = () => {
+    return request({
+        url: 'app/role/listSimple',
+        method: 'get',
+    });
+};

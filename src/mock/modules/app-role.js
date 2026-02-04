@@ -42,3 +42,32 @@ export function operations() {
         }
     }
 }
+
+export function listSimple() {
+    return {
+        url: 'app/role/listSimple',
+        method: 'get',
+        response: {
+            code: 200,
+            msg: null,
+            data: [
+                {
+                    id: 1,
+                    name: 'admin',
+                },
+                {
+                    id: 2,
+                    name: 'dev',
+                },
+                {
+                    id: 3,
+                    name: 'test',
+                },
+                {
+                    id: 4,
+                    name: 'mng',
+                }
+            ]
+        }
+    }
+}
