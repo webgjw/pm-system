@@ -7,10 +7,10 @@
                 <el-input v-model="filters.title" :placeholder="t('thead.title')"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button icon="search" type="primary" @click="findPage">{{ t('action.search') }}</el-button>
+                <el-button icon="search" type="primary" @click="doSearch">{{ t('action.search') }}</el-button>
             </el-form-item>
             <el-form-item>
-                <el-button icon="plus" type="primary">{{ t('action.add') }}</el-button>
+                <el-button icon="plus" type="primary" @click="handleAdd">{{ t('action.add') }}</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -28,16 +28,114 @@
     >
     </cm-table>
 </div>
+<!-- 新增修改界面 -->
+<el-dialog
+    :title="isEdit ? t('action.edit') : t('action.add')"
+    width="40%"
+    draggable
+    v-model="dialogVisible"
+    :close-on-click-modal="false"
+    @close="doClose"
+>
+    <el-form
+        :model="form"
+        :rules="rules"
+        ref="formRef"
+        @keyup.enter="handleSubmit"
+        label-width="80px"
+    >
+        <el-form-item :label="t('thead.type')" prop="type">
+            <el-radio-group v-model="form.type" :disabled="isEdit">
+                <el-radio
+                    v-for="(type, index) in menuTypeList"
+                    :label="index"
+                    :key="index"
+                >{{ t(`status.${type}`) }}</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item :label="t('thead.name')" prop="name">
+            <el-input v-model="form.name" :placeholder="t('form.nameRequired')"></el-input>
+        </el-form-item>
+        <el-form-item :label="t('thead.displayName')" prop="displayName">
+            <el-input v-model="form.displayName" :placeHolder="t('form.displayNameRequired')"></el-input>
+        </el-form-item>
+        <el-form-item v-if="form.type !== 2" :label="t('thead.icon')">
+            <el-input v-model="form.icon" :placeholder="t('thead.icon')"></el-input>
+        </el-form-item>
+        <el-form-item :label="t('form.parent')">
+            <el-cascader
+                v-model="form.parentId"
+                :props="{ label: 'displayName', value: 'id', checkStrictly: true, emitPath: false }"
+                :options="treeData"
+                class="w100p"
+            ></el-cascader>
+        </el-form-item>
+        <el-form-item
+            v-if="form.type === 1"
+            :label="t('thead.url')"
+            :prop="form.type === 1 ? 'url' : ''"
+        >
+            <el-input v-model="form.url" :placeholder="t('thead.url')"></el-input>
+        </el-form-item>
+        <el-form-item
+            v-if="form.type !== 2"
+            :label="t('thead.orderNum')"
+            :prop="form.type !== 2 ? 'orderNum' : ''"
+        >
+            <el-input-number v-model="form.orderNum" controls-position="right" :min="0"></el-input-number>
+        </el-form-item>
+    </el-form>
+    <template #footer>
+        <span class="dialog-footer">
+            <el-button @click="doClose">{{ t('action.cancel') }}</el-button>
+            <el-button type="primary" @click="handleSubmit">{{ t('action.confirm') }}</el-button>
+        </span>
+    </template>
+</el-dialog>
 </template>
 
 <script setup>
-import { listTree } from '@/apis/app-resource';
-const { t } = useI18n();
-const tableRef = ref();
-const filters = reactive({
-    title: '',
-});
+import { listTree, listTreeParents, save, update } from '@/apis/app-resource';
+import useTableHandlers from '../use-table-handlers';
 const menuTypeList = ref(['folder', 'menu', 'button']);
+const filters = reactive({
+    name: '',
+});
+const form = reactive({
+    id: '',
+    type: 0,
+    name: '',
+    displayName: '',
+    parentId: null,
+    url: '',
+    orderNum: 0,
+    icon: '',
+});
+const {
+    t,
+    tableRef,
+    dialogVisible,
+    isEdit,
+    formLoading,
+    formRef,
+    doSearch,
+    doAdd,
+    doEdit,
+    doSubmit,
+    doClose
+} = useTableHandlers(form);
+const treeData = ref([]);
+
+const operations = [
+    {
+        type: 'edit',
+        disabled: (row) => !!row.publishTime
+    },
+    {
+        type: 'delete'
+    }
+];
+
 const columns = computed(() => [
     { prop: 'id', label: t('thead.ID') },
     { prop: 'name', label: t('thead.name') },
@@ -62,23 +160,36 @@ const columns = computed(() => [
     { prop: 'url', label: t('thead.url'), showOverflowTooltip: true },
     { prop: 'orderNum', label: t('thead.orderNum') }
 ]);
-const operations = [
-    {
-        type: 'edit',
-        disabled: (row) => !!row.publishTime
-    },
-    {
-        type: 'delete'
-    }
-];
-// 获取分页数据
-function findPage() {
-    tableRef.value.reload();
+const rules = ref({
+    name: [
+        { required: true, message: t('form.nameRequired'), trigger: 'blur' }
+    ],
+    displayName: [
+        { required: true, message: t('form.displayNameRequired'), trigger: 'blur' }
+    ],
+    url: [
+        { required: true, message: t('form.urlRequired'), trigger: 'blur' }
+    ]
+});
+
+// methods
+const initForm = () => {
+    listTreeParents().then(res => {
+        treeData.value = res.data;
+    })
+}
+function handleAdd() {
+    initForm();
+    doAdd();
 }
 function handleEdit(row) {
-    console.log('edit', row);
+    initForm(row);
+    doEdit(row);
 }
 function handleDelete(ids, callback) {
     console.log('delete', ids, callback);
+}
+function handleSubmit() {
+    doSubmit({ save, update });
 }
 </script>
