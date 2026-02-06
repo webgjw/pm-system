@@ -69,6 +69,16 @@ export function update() {
         }
     }
 }
+// 删除
+export function remove() {
+    return {
+        url: 'app/user/remove',
+        method: 'post',
+        response: {
+            code: 200
+        }
+    }
+}
 // 设置密码
 export function setPsw() {
     return {

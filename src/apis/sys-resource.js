@@ -28,6 +28,17 @@ export const update = (data) => {
     });
 };
 
+// 删除
+export const remove = (data) => {
+    const { id } = data;
+    delete data.id;
+    return request({
+        url: `app/resource/delete/${id}`,
+        method: 'post',
+        data,
+    });
+};
+
 export const listTreeParents = (data) => {
     return request({
         url: 'app/resource/listParents',

@@ -35,7 +35,7 @@ export function listPage() {
 
 export function operations() {
     return {
-        url: 'sys/notice/(save|update)',
+        url: 'sys/notice/(save|update|delete)',
         method: 'post',
         response: {
             code: 200,

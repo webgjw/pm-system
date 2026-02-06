@@ -26,3 +26,14 @@ export const update = (data) => {
         data,
     });
 };
+
+// 删除
+export const remove = (data) => {
+    const { id } = data;
+    delete data.id;
+    return request({
+        url: `app/dept/delete/${id}`,
+        method: 'post',
+        data,
+    });
+};

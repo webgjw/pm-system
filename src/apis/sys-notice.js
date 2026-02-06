@@ -27,3 +27,12 @@ export const update = (data) => {
         data,
     });
 };
+
+// 删除
+export const remove = (data) => {
+    return request({
+        url: 'sys/notice/delete',
+        method: 'post',
+        data,
+    });
+};

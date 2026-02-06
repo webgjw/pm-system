@@ -82,6 +82,11 @@ export default function useTableHandlers(form) {
         dialogVisible.value = false;
         resetForm();
     }
+    const doRemove = (api, ids, callback) => {
+        api({ id: ids }).then(() => {
+            callback && callback();
+        });
+    };
     return {
         t,
         tableRef,
@@ -93,6 +98,7 @@ export default function useTableHandlers(form) {
         doAdd,
         doEdit,
         doSubmit,
-        doClose
+        doClose,
+        doRemove,
     };
 }

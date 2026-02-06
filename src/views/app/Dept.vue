@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { listTree, listOtherTreeById, save, update } from '@/apis/app-dept';
+import { listTree, listOtherTreeById, save, update, remove } from '@/apis/app-dept';
 import useTableHandlers from '../use-table-handlers';
 const filters = reactive({
     title: '',
@@ -86,7 +86,8 @@ const {
     doAdd,
     doEdit,
     doSubmit,
-    doClose=
+    doClose,
+    doRemove
 } = useTableHandlers();
 const deptData = ref([]);
 
@@ -121,7 +122,7 @@ function handleEdit(row) {
     doEdit(row);
 }
 function handleDelete(ids, callback) {
-    console.log('delete', ids, callback);
+    doRemove(remove, ids, callback);
 }
 function handleSubmit() {
     doSubmit({ save, update });

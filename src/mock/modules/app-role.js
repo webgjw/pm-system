@@ -35,7 +35,7 @@ export function listPage() {
 
 export function operations() {
     return {
-        url: 'app/role/(save|update)',
+        url: 'app/role/(save|update|delete|bindResource)',
         method: 'post',
         response: {
             code: 200,

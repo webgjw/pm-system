@@ -68,7 +68,7 @@
 </template>
 
 <script setup>
-import { listPage, save, update, setPsw } from '@/apis/sys-user';
+import { listPage, save, update, setPsw, remove } from '@/apis/sys-user';
 import { roles } from '@/mock/data';
 import useTableHandlers from '../use-table-handlers';
 const filters = reactive({
@@ -91,6 +91,7 @@ const {
     doEdit,
     doSubmit,
     doClose,
+    doRemove,
 } = useTableHandlers(form);
 const operations = [
     {
@@ -128,7 +129,7 @@ function isSelectable(row) {
     return row.createdBy !== 'system';
 }
 function handleDelete(ids, callback) {
-    console.log('delete', ids, callback);
+    doRemove(remove, ids, callback);
 }
 function handleSubmit() {
     doSubmit({ save, update }, (res) => {

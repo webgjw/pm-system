@@ -85,3 +85,13 @@ export function setPsw() {
         }
     }
 }
+// 删除
+export function update() {
+    return {
+        url: 'sys/user/delete',
+        method: 'post',
+        response: {
+            code: 200
+        }
+    }
+}

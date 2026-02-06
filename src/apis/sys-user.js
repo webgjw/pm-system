@@ -36,3 +36,12 @@ export const setPsw = (data) => {
         data,
     });
 };
+
+// 删除
+export const remove = (data) => {
+    return request({
+        url: 'sys/user/delete',
+        method: 'post',
+        data,
+    });
+};

@@ -28,9 +28,29 @@ export const update = (data) => {
     });
 };
 
+// 删除
+export const remove = (data) => {
+    const { id } = data;
+    delete data.id;
+    return request({
+        url: `app/role/delete/${id}`,
+        method: 'post',
+        data,
+    });
+};
+
 export const listSimple = () => {
     return request({
         url: 'app/role/listSimple',
         method: 'get',
+    });
+};
+
+// 绑定资源
+export const bindResource = (data) => {
+    return request({
+        url: 'app/role/bindResource',
+        method: 'post',
+        data,
     });
 };

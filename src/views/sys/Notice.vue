@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { listPage, save, update } from '@/apis/sys-notice';
+import { listPage, save, update, remove } from '@/apis/sys-notice';
 import useTableHandlers from '../use-table-handlers';
 const filters = reactive({
     title: '',
@@ -83,6 +83,7 @@ const {
     doEdit,
     doSubmit,
     doClose,
+    doRemove,
 } = useTableHandlers(form);
 
 const operations = [
@@ -120,7 +121,7 @@ const rules = computed(() => {
 
 // methods
 function handleDelete(ids, callback) {
-    console.log('delete', ids, callback);
+    doRemove(remove, ids, callback)
 }
 function handleSubmit() {
     doSubmit({ save, update });

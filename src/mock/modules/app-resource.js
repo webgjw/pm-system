@@ -35,7 +35,7 @@ export function listPage() {
 
 export function operations() {
     return {
-        url: 'app/resource/(save|update)',
+        url: 'app/resource/(save|update|delete)',
         method: 'post',
         response: {
             code: 200,

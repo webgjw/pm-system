@@ -54,15 +54,49 @@
         </div>
     </template>
 </el-dialog>
+<!-- 绑定资源 -->
+<el-dialog
+    :title="t('action.bindResource')"
+    width="40%"
+    draggable
+    v-model="bindDlgVisible"
+    :close-on-click-modal="false"
+>
+    <el-tree 
+        ref="treeRef"
+        node-key="id"
+        :data="resourceTreeData"
+        show-checkbox
+        default-expand-all
+        :default-checked-keys="defaultCheckedKeys"
+        :props="{label: 'displayName'}"
+    />
+    <template #footer>
+        <div class="dialog-footer">
+            <el-button @click="bindDlgVisible=false">{{ t('action.cancel') }}</el-button>
+            <el-button type="primary" @click="onBindResourceConfirm" :loading="bindLoading">
+                {{ t('action.submit') }}
+            </el-button>
+        </div>
+    </template>
+</el-dialog>
 </template>
 
 <script setup>
-import { listPage, save, update } from '@/apis/app-role';
+import { listPage, save, update, remove, bindResource } from '@/apis/app-role';
 import { listTree } from '@/apis/app-resource';
+
+
 import useTableHandlers from '../use-table-handlers';
 const filters = reactive({
     name: '',
 });
+const resourceTreeData = ref([]);
+const bindDlgVisible = ref(false);
+const defaultCheckedKeys = ref([]);
+const bindLoading = ref(false);
+const treeRef = ref();
+
 const operations = [
     {
         type: 'edit'
@@ -91,7 +125,8 @@ const {
     doAdd,
     doEdit,
     doSubmit,
-    doClose
+    doClose,
+    doRemove
 } = useTableHandlers(form);
 
 // computed 
@@ -115,10 +150,26 @@ const rules = computed(() => {
 
 // methods
 function handleDelete(ids, callback) {
-    console.log('delete', ids, callback);
+    doRemove(remove, ids, callback);
 }
 function handleBindResource(row) {
-    console.log('bindResource', row);
+    bindDlgVisible.value = true;
+    getResourceTree();
+    defaultCheckedKeys.value = row.resourceIds ? row.resourceIds.split(',') : [];
+}
+function getResourceTree() {
+    listTree().then(res => {
+        resourceTreeData.value = res.data;
+    });
+}
+function onBindResourceConfirm() {
+    bindLoading.value = true;
+    bindResource({ ids: treeRef.value.getCheckedKeys().toString() }).then(() => {
+        ElMessage({ message: t('tip.success'), type: 'success', showClose: true });
+        bindDlgVisible.value = false;
+    }).finally(() => {
+        bindLoading.value = false;
+    });
 }
 function handleSubmit() {
     doSubmit({ save, update });

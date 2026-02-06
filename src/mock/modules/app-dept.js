@@ -63,7 +63,7 @@ export function listTree() {
 
 export function operations() {
     return {
-        url: 'app/dept/(save|update)',
+        url: 'app/dept/(save|update|delete)',
         method: 'post',
         response: {
             code: 200,

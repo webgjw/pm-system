@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { listPage, save, update } from '@/apis/app-user';
+import { listPage, save, update, remove } from '@/apis/app-user';
 import { listSimple } from '@/apis/app-role';
 import { listTree } from '@/apis/app-dept';
 import useTableHandlers from '../use-table-handlers';
@@ -110,6 +110,7 @@ const {
     doEdit,
     doSubmit,
     doClose,
+    doRemove
 } = useTableHandlers(form);
 
 const deptData = ref([]);
@@ -183,7 +184,7 @@ function findDeptTree() {
     });
 }
 function handleDelete(ids, callback) {
-    console.log('delete', ids, callback);
+    doRemove(remove, ids, callback);
 }
 function handleSubmit() {
     doSubmit({ save, update, getParams }, (res) => {

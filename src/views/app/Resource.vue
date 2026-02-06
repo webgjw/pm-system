@@ -95,7 +95,7 @@
 </template>
 
 <script setup>
-import { listTree, listTreeParents, save, update } from '@/apis/app-resource';
+import { listTree, listTreeParents, save, update, remove } from '@/apis/app-resource';
 import useTableHandlers from '../use-table-handlers';
 const menuTypeList = ref(['folder', 'menu', 'button']);
 const filters = reactive({
@@ -122,7 +122,8 @@ const {
     doAdd,
     doEdit,
     doSubmit,
-    doClose
+    doClose,
+    doRemove
 } = useTableHandlers(form);
 const treeData = ref([]);
 
@@ -187,7 +188,7 @@ function handleEdit(row) {
     doEdit(row);
 }
 function handleDelete(ids, callback) {
-    console.log('delete', ids, callback);
+    doRemove(remove, ids, callback);
 }
 function handleSubmit() {
     doSubmit({ save, update });
