@@ -60,3 +60,25 @@ export function menuTree() {
         },
     };
 }
+
+export function changeProfile() {
+    return {
+        url: 'personal/changeProfile',
+        type: 'post',
+        response: {
+            code: 200,
+            msg: null
+        }
+    }
+}
+
+export function changePsw() {
+    return {
+        url: '/personal/changepsw',
+        type: 'post',
+        response: {
+            code: 200,
+            msg: null,
+        }
+    };
+}

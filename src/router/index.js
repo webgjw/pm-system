@@ -27,7 +27,24 @@ const routes = [
                     requireAuth: true
                 },
                 component: () => import("@/views/personal/index.vue"),
+                redirect: "/personal/profile",
                 children: [
+                    {
+                        path: "profile",
+                        name: "PersonalProfile",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/personal/Profile.vue"),
+                    },
+                    {
+                        path: "changepsw",
+                        name: "PersonalChangePsw",
+                        meta: {
+                            requireAuth: true,
+                        },
+                        component: () => import("@/views/personal/ChangePsw.vue"),
+                    },
                     {
                         path: 'message',
                         name: "PersonalMessage",

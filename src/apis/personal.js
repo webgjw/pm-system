@@ -15,3 +15,22 @@ export const menuTree = (data) => {
         data,
     });
 };
+
+export function changeProfile() {
+    return {
+        url: 'personal/changeProfile',
+        type: 'post',
+        response: {
+            code: 200,
+            msg: null,
+        }
+    }
+}
+
+export const changePsw = (data) => {
+    return request({
+        url: '/personal/changepsw',
+        method: 'post',
+        data,
+    });
+};
