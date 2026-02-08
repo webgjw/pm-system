@@ -51,7 +51,7 @@ const routes = [
                         meta: {
                             requireAuth: true
                         },
-                        component: () => import("@/views/personal/Message.vue")
+                        component: () => import("@/views/personal/Message/index.vue")
                     }
                 ]
             }
