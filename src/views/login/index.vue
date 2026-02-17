@@ -2,7 +2,7 @@
 <div class="page flex-center">
     <div class="sign-box">
         <el-form ref="formRef" :model="form" :rules="rules" label-width="86px">
-            <h3 class="title">{{ t('login') }}</h3>
+            <h3 class="title">{{ t('login') }}8888</h3>
             <el-form-item :label="t('form.username')" prop="account">
                 <el-input
                     v-model="form.account"
