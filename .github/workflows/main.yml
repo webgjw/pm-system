@@ -1,32 +1,37 @@
-# 工作流的名称
 name: Build and Deploy
-# 触发条件
-on: [push]
-# 工作流运行的作业配置
+
+on:
+  push:
+    branches: [ main, master ]  # 指定触发分支
+
 jobs:
-  # 作业名称
   build-and-deploy:
-    # 运行在最新的Ubuntu环境中
     runs-on: ubuntu-latest
-    # 作业的步骤
+    
+    # 添加权限配置
+    permissions:
+      contents: write
+      pages: write
+      
     steps:
-      # 步骤1: 检出代码
       - name: Checkout
-        # 使用actions/checkout@v3来检出代码
         uses: actions/checkout@v3
-      # 步骤2: 安装和打包
-      - name: Install and Build
-        # 运行的命令，这里包含两条：npm i 和 npm run build
-        run: |
-          npm i
-          npm run build
-      # 步骤3: 部署静态资源
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          # 需要部署的分支
+          node-version: '18'
+          
+      - name: Install and Build
+        run: |
+          npm ci  # 使用 ci 而不是 i，更稳定
+          npm run build
+          
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.6.1
+        with:
           branch: gh-pages
-          # 需要部署的文件夹
           folder: dist
-          # 部署的权限token，这里使用了GitHub Secrets中的DEPLOY_KEY
+          # 使用 GITHUB_TOKEN 而不是自定义的 DEPLOY_KEY
           token: ${{ secrets.GITHUB_TOKEN }}
+          clean: true  # 清理旧文件
