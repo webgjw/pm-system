@@ -46,3 +46,10 @@ export const listTreeParents = (data) => {
         data
     });
 };
+
+export const listTree = () => {
+    return request({
+        url: 'app/resource/listTree',
+        method: 'get',
+    });
+};
