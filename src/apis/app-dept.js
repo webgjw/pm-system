@@ -7,6 +7,14 @@ export const listTree = () => {
     });
 };
 
+export const listOtherTreeById = (data) => {
+    return request({
+        url: 'app/dept/listOtherTreeById',
+        method: 'post',
+        data,
+    });
+};
+
 // 新增
 export const save = (data) => {
     return request({

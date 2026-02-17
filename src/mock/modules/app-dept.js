@@ -70,3 +70,24 @@ export function operations() {
         }
     }
 }
+
+export function listOtherTreeById() {
+    return {
+        url: 'app/dept/listOtherTreeById',
+        method: 'post',
+        response: {
+            code: 200,
+            msg: null,
+            data: [
+                {
+                    id: 1,
+                    name: 'test1'
+                },
+                {
+                    id: 2,
+                    name: 'test2'
+                }
+            ]
+        }
+    }
+}

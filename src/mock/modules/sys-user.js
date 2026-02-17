@@ -86,7 +86,7 @@ export function setPsw() {
     }
 }
 // 删除
-export function update() {
+export function remove() {
     return {
         url: 'sys/user/delete',
         method: 'post',

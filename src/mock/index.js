@@ -1,12 +1,12 @@
 import Mock from 'mockjs';
 import config from '../request/config';
-const moduleFiles = require.context('./modules', true, /.js$/);
+const moduleFiles = import.meta.glob('./modules/*.js', { eager: true });
 const modules = {};
-moduleFiles.keys().forEach(fileName => {
-    let name = fileName.replace('./', '');
-    name = name.substring(0, name.length - 3).replace(/-(\w)/g, (L) => 
-        L.toUpperCase()).replace(/-/g, '');
-    modules[name] = moduleFiles(fileName);
+Object.keys(moduleFiles).forEach(filePath => {
+    let name = filePath.replace('./modules/', '');
+    name = name.substring(0, name.length - 3).replace(/-(\w)/g, (_, c) => c.toUpperCase()).replace(/-/g, '');
+    const mod = moduleFiles[filePath];
+    modules[name] = (mod && mod.default) ? mod.default : mod;
 });
 
 const { baseURL, timeout } = config;
