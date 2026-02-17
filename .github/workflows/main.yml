@@ -22,11 +22,11 @@ jobs:
           npm run build
       # 步骤3: 部署静态资源
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        uses: JamesIves/github-pages-deploy-action@4.6.1
         with:
           # 需要部署的分支
           branch: gh-pages
           # 需要部署的文件夹
           folder: dist
           # 部署的权限token，这里使用了GitHub Secrets中的DEPLOY_KEY
-          token: ${{ secrets.DEPLOY_KEY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
