@@ -22,7 +22,7 @@ jobs:
           npm run build
       # 步骤3: 部署静态资源
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.2.5
+        uses: JamesMGreene/gh-pages-deploy@v4
         with:
           # 需要部署的分支
           branch: gh-pages
