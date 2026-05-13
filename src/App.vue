@@ -1,36 +1,88 @@
 <template>
-  <el-config-provider :locale="elementLocales[locale]">
-    <router-view></router-view>
-  </el-config-provider>
+  <div class="app">
+    <h1>彩票机选平台</h1>
+
+    <div class="tabs">
+      <button
+        :class="{ active: type === 'ssq' }"
+        @click="type = 'ssq'"
+      >
+        双色球
+      </button>
+      <button
+        :class="{ active: type === 'd3' }"
+        @click="type = 'd3'"
+      >
+        福彩3D
+      </button>
+    </div>
+
+    <LotterySelector
+      :type="type"
+      @select="addHistory"
+    />
+
+    <HistoryList v-if="false" :list="history" />
+  </div>
 </template>
 
 <script setup>
-import { elementLocales } from '@/i18n';
-const { locale } = useI18n();
-locale.value = localStorage.getItem('locale') || 'zh-cn';
+import { ref, onMounted } from 'vue'
+import LotterySelector from './components/LotterySelector.vue'
+import HistoryList from './components/HistoryList.vue'
+
+const type = ref('ssq')
+const history = ref([])
+
+function addHistory(record) {
+  history.value.unshift(record)
+  if (history.value.length > 20) {
+    history.value.pop()
+  }
+  localStorage.setItem('lottery_history', JSON.stringify(history.value))
+}
+
+onMounted(() => {
+  const data = localStorage.getItem('lottery_history')
+  if (data) {
+    history.value = JSON.parse(data)
+  }
+})
 </script>
 
 <style>
-html,
 body {
-  height: 100%;
+  font-family: Arial, sans-serif;
+  padding: 16px;
+  background: #f5f5f5;
 }
-#app {
-  height: 100%;
-  overflow: hidden;
+
+.app {
+  max-width: 600px;
+  margin: auto;
 }
-.flex-center {
+
+.tabs {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
 }
-.cursor {
-  cursor: pointer;
+
+.tabs button {
+  flex: 1;
+  padding: 8px;
 }
-.txt-c {
-  text-align: center;
+
+.active {
+  background: #333;
+  color: #fff;
 }
-.w100p {
-  width: 100%;
+
+@media (max-width: 600px) {
+  .balls span {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
 }
 </style>
