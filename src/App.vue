@@ -29,7 +29,7 @@
 
     <ul v-show="showRecords" class="dialog-records">
       <button @click="showRecords=false">关闭</button>
-      <li v-for="(item, index) in historyRecords" :key="index">{{item}}</li>
+      <li v-for="(item, index) in historyRecords" :key="index">({{index+1}}) {{item}}</li>
     </ul>
   </div>
 </template>
