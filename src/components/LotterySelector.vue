@@ -41,7 +41,32 @@ function generateSSQ() {
 }
 
 function generate3D() {
-  return Array.from({ length: 3 }, () => randomInt(0, 9))
+  const lottery_records = localStorage.getItem('lottery_records');
+  let excludeList = [];
+  if (lottery_records) {
+    excludeList = JSON.parse(lottery_records);
+  }
+  // 只有过滤数组不为空时才创建 Set
+  const excludeSet = excludeList.length > 0
+    ? new Set(excludeList.map(item => item))
+    : null;
+
+  let result;
+
+  do {
+    const nums = new Set();
+
+    while (nums.size < 3) {
+      nums.add(Math.floor(Math.random() * 10));
+    }
+
+    result = [...nums].sort((a, b) => a - b);
+  } while (
+    excludeSet &&
+    excludeSet.has(result.join(','))
+  );
+
+  return result;
 }
 
 function generate() {
