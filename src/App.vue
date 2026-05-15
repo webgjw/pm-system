@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <h1>彩票机选平台</h1>
+    <h1><img src="./assets/logo-top.png" width="260" height="50"></h1>
 
     <div class="tabs">
       <button
