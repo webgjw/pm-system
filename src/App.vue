@@ -29,13 +29,13 @@
 
     <ul v-show="showRecords" class="dialog-records">
       <button @click="showRecords=false">关闭</button>
-      <li v-for="(item, index) in historyRecords" :key="index">({{index+1}}) {{item}}</li>
+      <li v-for="(item, index) in reversedList" :key="index">({{index+1}}) {{item}}</li>
     </ul>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import LotterySelector from './components/LotterySelector.vue'
 import HistoryList from './components/HistoryList.vue'
 
@@ -51,6 +51,7 @@ const saveRecord = () => {
   }
   if (value.value) {
     if (!result.includes(value.value)) {
+      result.shift();
       result.push(value.value);
       value.value = '';
     }
@@ -62,6 +63,7 @@ const saveRecord = () => {
 
 let showRecords = ref(false);
 let historyRecords = reactive([]);
+let reversedList = computed(() => [...historyRecords].reverse());
 const viewRecords = () => {
   showRecords.value = true;
   const lottery_records = localStorage.getItem('lottery_records');
