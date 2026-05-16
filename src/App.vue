@@ -24,7 +24,9 @@
 
     <HistoryList v-if="false" :list="history" />
     <button @click="viewRecords">查看最近30期开奖结果</button><br/><br/>
-    <input v-model="value" /><button @click="saveRecord">保存</button><br/><br/>
+    <input v-model="value" /><br/><br/>
+    <button @click="saveRecord">保存到尾部</button><br/><br/>
+    <button @click="saveRecord2">保存到头部</button><br/><br/>
     <button @click="clearRecords">清空历史开奖记录</button>
 
     <ul v-show="showRecords" class="dialog-records">
@@ -40,7 +42,7 @@ import LotterySelector from './components/LotterySelector.vue'
 import HistoryList from './components/HistoryList.vue'
 import { getArray, saveArray, clearArray } from './utils/indexedDB'
 
-const type = ref('ssq')
+const type = ref('d3')
 const history = ref([])
 
 const value = ref('');
@@ -48,9 +50,33 @@ const saveRecord = async () => {
   let lottery_records = await getArray('lottery_records');
   if (value.value) {
     if (!lottery_records.includes(value.value)) {
-      lottery_records.length >= 30 && lottery_records.shift();
+      if (lottery_records.length >= 30) {
+        alert("已经达到30组号码了！")
+        return;
+      }
       lottery_records.push(value.value);
       value.value = '';
+    } else {
+      alert('号码已存在');
+      return;
+    }
+    await saveArray('lottery_records', lottery_records);
+  } else {
+    alert('请输入合法的3d号码');
+  }
+};
+const saveRecord2 = async () => {
+  let lottery_records = await getArray('lottery_records');
+  if (value.value) {
+    if (!lottery_records.includes(value.value)) {
+      if (lottery_records.length >= 30) {
+        lottery_records.pop();
+      }
+      lottery_records.unshift(value.value);
+      value.value = '';
+    } else {
+      alert('号码已存在');
+      return;
     }
     await saveArray('lottery_records', lottery_records);
   } else {
