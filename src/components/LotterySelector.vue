@@ -62,13 +62,12 @@ async function generate3D() {
     excludeSet &&
     excludeSet.has(result.join(','))
   );
-
   return result;
 }
 
-function generate() {
+async function generate() {
   result.value =
-    props.type === 'ssq' ? generateSSQ() : generate3D()
+    props.type === 'ssq' ? generateSSQ() : await generate3D()
 
   emit('select', {
     type: props.type,
