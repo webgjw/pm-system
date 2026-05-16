@@ -38,41 +38,37 @@
 import { ref, onMounted, reactive, computed } from 'vue'
 import LotterySelector from './components/LotterySelector.vue'
 import HistoryList from './components/HistoryList.vue'
+import { getArray, saveArray, clearArray } from './utils/indexedDB'
 
 const type = ref('ssq')
 const history = ref([])
 
 const value = ref('');
-const saveRecord = () => {
-  const lottery_records = localStorage.getItem('lottery_records');
-  let result = [];
-  if (lottery_records) {
-    result = JSON.parse(lottery_records);
-  }
+const saveRecord = async () => {
+  let lottery_records = await getArray('lottery_records');
   if (value.value) {
-    if (!result.includes(value.value)) {
-      result.shift();
-      result.push(value.value);
+    if (!lottery_records.includes(value.value)) {
+      lottery_records.length >= 30 && lottery_records.shift();
+      lottery_records.push(value.value);
       value.value = '';
     }
-    localStorage.setItem('lottery_records', JSON.stringify(result));
+    await saveArray('lottery_records', lottery_records);
   } else {
     alert('请输入合法的3d号码');
   }
 };
 
 let showRecords = ref(false);
-let historyRecords = reactive([]);
-let reversedList = computed(() => [...historyRecords].reverse());
-const viewRecords = () => {
+let historyRecords = ref([]);
+let reversedList = computed(() => [...historyRecords.value].reverse());
+const viewRecords = async () => {
   showRecords.value = true;
-  const lottery_records = localStorage.getItem('lottery_records');
-  historyRecords = lottery_records? JSON.parse(lottery_records) : [];
+  historyRecords.value = await getArray('lottery_records');
 };
 
-const clearRecords = () => {
+const clearRecords = async () => {
   if (confirm("确定要清除历史开奖记录吗?")) {
-    localStorage.removeItem('lottery_records');
+    await clearArray('lottery_records');
   }
 };
 

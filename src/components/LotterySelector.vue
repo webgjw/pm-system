@@ -22,6 +22,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { uniqueRandomList, randomInt } from '../utils/random'
+import { getArray } from '../utils/indexedDB'
 
 const props = defineProps({
   type: {
@@ -40,12 +41,8 @@ function generateSSQ() {
   return [...red, blue]
 }
 
-function generate3D() {
-  const lottery_records = localStorage.getItem('lottery_records');
-  let excludeList = [];
-  if (lottery_records) {
-    excludeList = JSON.parse(lottery_records);
-  }
+async function generate3D() {
+  let excludeList = await getArray('lottery_records');
   // 只有过滤数组不为空时才创建 Set
   const excludeSet = excludeList.length > 0
     ? new Set(excludeList.map(item => item))
