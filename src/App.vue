@@ -144,8 +144,8 @@ body {
 
 @media (max-width: 600px) {
   .balls span {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     font-size: 10px;
   }
 }

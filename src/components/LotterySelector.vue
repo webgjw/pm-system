@@ -16,7 +16,7 @@
       <button @click="generate">机选</button>
       <button @click="clear">清空</button>
       <button @click="copy">复制</button>
-      <input type="checkbox" v-model="filterFlag">过滤
+      <p v-if="type === 'd3'"><input type="checkbox" v-model="filterFlag">过滤</p>
     </div>
   </div>
 </template>
@@ -138,8 +138,8 @@ watch(
 
 .balls span {
   color: #fff;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;
