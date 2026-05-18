@@ -15,6 +15,8 @@
     <div class="actions">
       <button @click="generate">机选</button>
       <button @click="clear">清空</button>
+      <button @click="copy">复制</button>
+      <input type="checkbox" v-model="filterFlag">过滤
     </div>
   </div>
 </template>
@@ -34,6 +36,28 @@ const props = defineProps({
 const emit = defineEmits(['select'])
 
 const result = ref([])
+const filterFlag = ref(true);
+
+function formatArray(arr) {
+  const padded = arr.map(n => n.toString().padStart(2, '0'));
+  return `${padded.slice(0, 6).join(' ')} - ${padded[6]}`;
+}
+
+const copy = () => {
+  if (result.value.length === 0) {
+    alert('复制失败');
+    return;
+  }
+  const text = props.type === 'ssq' ? formatArray(result.value) : result.value.join(' ');
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      alert('已复制');
+    })
+    .catch(err => {
+      console.error('复制失败', err);
+    });
+};
 
 function generateSSQ() {
   const red = uniqueRandomList(6, 1, 33)
@@ -42,7 +66,10 @@ function generateSSQ() {
 }
 
 async function generate3D() {
-  let excludeList = await getArray('lottery_records');
+  let excludeList = [];
+  if (filterFlag.value) {
+    excludeList = await getArray('lottery_records');
+  }
   // 只有过滤数组不为空时才创建 Set
   const excludeSet = excludeList.length > 0
     ? new Set(excludeList.map(item => item))
