@@ -16,7 +16,10 @@
       <button @click="generate">机选</button>
       <button @click="clear">清空</button>
       <button @click="copy">复制</button>
-      <p v-if="type === 'd3'"><input type="checkbox" v-model="filterFlag">过滤</p>
+      <p><input type="checkbox" v-model="filterFlag">过滤</p>
+      <p>
+        <span v-for="item in lottery_records_ssq">{{item}}&nbsp;</span>
+      </p>
     </div>
   </div>
 </template>
@@ -59,9 +62,17 @@ const copy = () => {
     });
 };
 
-function generateSSQ() {
+const lottery_records_ssq = ref([])
+async function generateSSQ() {
+  lottery_records_ssq.value = await getArray('lottery_records_ssq');
   const red = uniqueRandomList(6, 1, 33)
-  const blue = randomInt(1, 16)
+  let blue = 0;
+  if (lottery_records_ssq.value.length >= 16) {
+    return [...red, blue]
+  }
+  do {
+    blue = randomInt(1, 16);
+  } while(lottery_records_ssq.value.includes(String(blue)));
   return [...red, blue]
 }
 
@@ -94,7 +105,7 @@ async function generate3D() {
 
 async function generate() {
   result.value =
-    props.type === 'ssq' ? generateSSQ() : await generate3D()
+    props.type === 'ssq' ? await generateSSQ() : await generate3D()
 
   emit('select', {
     type: props.type,

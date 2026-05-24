@@ -23,11 +23,14 @@
     />
 
     <HistoryList v-if="false" :list="history" />
-    <button @click="viewRecords">查看最近30期开奖结果</button><br/><br/>
-    <input v-model="value" /><br/><br/>
-    <button @click="saveRecord">保存到尾部</button><br/><br/>
-    <button @click="saveRecord2">保存到头部</button><br/><br/>
-    <button @click="clearRecords">清空历史开奖记录</button>
+    <p v-if="type==='d3'"><button @click="viewRecords">查看3D最近30期开奖结果</button><br/><br/></p>
+    <p v-if="type==='ssq'">待过滤蓝球号码: <input type="text" v-model="filterSsq"><button @click="saveBlue">保存</button></p>
+    <div v-if="type==='d3'">
+      <input v-model="value" /><br/><br/>
+      <button @click="saveRecord">保存到尾部</button><br/><br/>
+      <button @click="saveRecord2">保存到头部</button><br/><br/>
+      <button @click="clearRecords">清空历史开奖记录</button>
+    </div>
 
     <ul v-show="showRecords" class="dialog-records">
       <button @click="showRecords=false">关闭</button>
@@ -37,13 +40,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue'
+import { ref, onMounted, reactive, computed, watch } from 'vue'
 import LotterySelector from './components/LotterySelector.vue'
 import HistoryList from './components/HistoryList.vue'
 import { getArray, saveArray, clearArray } from './utils/indexedDB'
 
 const type = ref('d3')
 const history = ref([])
+let filterSsq = ref([])
+
+const saveBlue = async () => {
+  if (filterSsq.value.length === 0) {
+    await saveArray('lottery_records_ssq', []);
+    return;
+  }
+  let arr = [];
+  if (typeof filterSsq.value === 'string') {
+    arr = filterSsq.value.split(',');
+  } else {
+    arr = [...filterSsq.value];
+  }
+  await saveArray('lottery_records_ssq', arr.filter(str => str !== ''));
+};
 
 const value = ref('');
 const saveRecord = async () => {
@@ -99,17 +117,14 @@ const clearRecords = async () => {
 };
 
 function addHistory(record) {
-  history.value.unshift(record)
-  if (history.value.length > 20) {
-    history.value.pop()
-  }
-  localStorage.setItem('lottery_history', JSON.stringify(history.value))
 }
 
-onMounted(() => {
-  const data = localStorage.getItem('lottery_history')
-  if (data) {
-    history.value = JSON.parse(data)
+onMounted(async () => {
+  const lottery_records_ssq = await getArray('lottery_records_ssq');
+  if (lottery_records_ssq?.length > 0) {
+    filterSsq.value = lottery_records_ssq;
+  } else {
+    filterSsq.value = [];
   }
 })
 </script>
